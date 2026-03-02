@@ -1,0 +1,15 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'RULES=$(curl -s --max-time 10 https://raw.githubusercontent.com/npezarro/agentGuidance/main/agent.md 2>/dev/null); if [ -n \"$RULES\" ]; then echo \"$RULES\"; fi'",
+            "timeout": 15000
+          }
+        ]
+      }
+    ]
+  }
+}
