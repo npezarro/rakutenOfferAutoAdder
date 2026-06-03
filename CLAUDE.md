@@ -30,3 +30,26 @@ If you cannot fetch `agent.md` from the remote, apply these core rules:
 10. **Dry-run destructive commands.** Use `--dry-run` when available.
 
 For the full ruleset, see `agent.md` in this repository.
+
+## Project: Rakuten Offer Auto-Adder
+
+### Userscript
+- **File:** `rakuten-auto-add.user.js` — Tampermonkey userscript (v2.0)
+- **Matches:** `https://www.rakuten.com/in-store*`
+- **Function:** Automatically clicks all "Add" buttons for Rakuten In-Store Cash Back offers; expands "See More" sections first, then retries failed offers up to 3 rounds
+
+### Auto-Update
+- `@updateURL` and `@downloadURL` both point to the `main` branch raw URL
+- Tampermonkey checks for updates on script execution; version bump in `@version` triggers an update prompt
+
+### Key Config (top of script)
+| Key | Default | Purpose |
+|---|---|---|
+| `minDelay` | 800ms | Min delay between offer clicks |
+| `maxDelay` | 1800ms | Max delay between offer clicks |
+| `verifyWait` | 5000ms | Timeout waiting for "Added" confirmation |
+| `expandWait` | 2000ms | Wait after clicking "See More" |
+| `maxRetryRounds` | 3 | Max retry passes for failed offers |
+
+### No Build Step
+This repo has no `package.json`. The single `.user.js` file is the deliverable — edit it directly and commit to `main` to publish the update.
