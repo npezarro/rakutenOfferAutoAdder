@@ -42,6 +42,10 @@ For the full ruleset, see `agent.md` in this repository.
 - `@updateURL` and `@downloadURL` both point to the `main` branch raw URL
 - Tampermonkey checks for updates on script execution; version bump in `@version` triggers an update prompt
 
+### Userscript Output Rules
+- **Ship with all debug/verbose logging flags disabled.** Gate any console output behind a boolean constant (`const DEBUG = false`) and never commit `true` to production — users get console spam they can't silence, and it masks real errors in their browser console.
+- **Preserve the `==UserScript==` header block integrity** when editing. Do not remove or reorder header fields. If the script starts using any `GM_*` function, add the matching `@grant` line to the header.
+
 ### Key Config (top of script)
 | Key | Default | Purpose |
 |---|---|---|
