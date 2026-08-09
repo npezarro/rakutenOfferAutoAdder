@@ -57,3 +57,30 @@ For the full ruleset, see `agent.md` in this repository.
 
 ### No Build Step
 This repo has no `package.json`. The single `.user.js` file is the deliverable — edit it directly and commit to `main` to publish the update.
+
+### DOM Interaction Rules (click loops on a framework-rendered page)
+
+From `agentGuidance/guidance/tampermonkey.md`. These apply directly to `findAddButtons()` /
+`startRun()` / `clickAndVerify()`, which snapshot every "Add" button once and then click through
+that list (and re-click the failed ones on later retry rounds).
+
+- **Re-query selectors inside the click loop; never reuse a node reference across clicks.**
+  Modern JS frameworks (React, Vue, Lit) replace DOM nodes on each state update, so a cached
+  button reference is detached after the first click. Clicking a detached node throws no error
+  and has no effect — the run just silently stops adding offers, and the retry rounds re-click
+  the same dead nodes. Re-run `document.querySelectorAll` on every iteration and at the start of
+  every retry round, and re-find offers by a stable identifier rather than holding the element.
+- **Add a stall guard.** After each click, read the control's state back (button text,
+  `disabled`); if it did not change, break or re-find rather than clicking into a detached node.
+  A stale reference otherwise looks identical to a genuine "offer did not confirm" timeout, so
+  the bug hides inside the failure counter.
+- **Prefer `<button>` matches over generic text matches.** A non-interactive wrapper `<div>` or
+  `<span>` carrying the same label often appears *before* the real `<button>` in the DOM, and
+  clicking it does nothing. Query `button` elements first (filtering on `innerText` /
+  `aria-label`), then `[aria-label*="..."]` for icon-only controls, and use a generic text
+  search last. This matters for the "See More" expander, which currently matches
+  `button, a, [role="button"]` by text.
+- **Dismiss cookie/consent overlays before interacting.** Consent banners intercept all pointer
+  events, so every click on a covered element fails silently. Dismiss them at the start of the
+  run, and when a well-targeted click has no effect, check for an overlay before concluding the
+  selector rotted.
