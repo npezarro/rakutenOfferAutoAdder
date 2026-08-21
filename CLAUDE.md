@@ -1,12 +1,15 @@
 # Agent Bootstrap
 
-On session start, fetch and apply the latest global rules:
+On session start, read and apply the global rules from the local clone:
 
 ```bash
-curl -s https://raw.githubusercontent.com/npezarro/agentGuidance/main/agent.md
+AG="$HOME/repos/agentGuidance"; [ -d "$AG" ] || AG="$HOME/agentGuidance"; cat "$AG/agent.md"
 ```
 
-If the fetch fails (network error, timeout), continue with the fallback rules below. Do not block on this.
+If the clone is missing, continue with the fallback rules below. Do not block on
+this. The source repo is private, so an unauthenticated fetch returns 404; the
+public mirror is github.com/npezarro/openAgentGuidance (infrastructure-specific
+guidance excluded).
 
 Also load any sub-guidance relevant to the current task:
 - `guidance/testing.md` — when writing or running tests
