@@ -87,3 +87,9 @@ that list (and re-click the failed ones on later retry rounds).
   events, so every click on a covered element fails silently. Dismiss them at the start of the
   run, and when a well-targeted click has no effect, check for an overlay before concluding the
   selector rotted.
+
+### Version Bump Rule
+
+From `agentGuidance/guidance/tampermonkey.md`.
+
+- **Bump `@version` in the `==UserScript==` header on every change to `rakuten-auto-add.user.js`.** Tampermonkey compares the `@version` at `@updateURL` against the installed copy and only offers an update when it is higher. A commit that changes the script body without a bump is never delivered to existing installs, so the fix silently ships nowhere. Also update the `(v2.0)` reference in the Userscript section above when you bump.
